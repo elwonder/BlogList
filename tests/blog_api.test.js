@@ -15,6 +15,8 @@ beforeEach(async () => {
 
 const api = supertest(app);
 
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVsd29uZGVyIiwiaWQiOiI1Zjk2YjA1NTFhMmMwZTBmNTQwZWZkYTIiLCJpYXQiOjE2MDg1NTczNDl9.--VgfHVPQlnhgD5heLzksZzHgIVSiGEXOO8TlZOkF9Q';
+
 test('blogs are returned as json', async () => {
     await api
         .get('/api/blogs')
@@ -44,6 +46,7 @@ test('posting blog working correct', async () => {
 
     await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -63,10 +66,12 @@ test('likes setting to 0 by default', async () => {
         title: 'How to manage life',
         author: 'Dmitry Issaykin',
         url: 'localhost:8080/how_to_manage_life.html',
+        authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVsd29uZGVyIiwiaWQiOiI1Zjk2YjA1NTFhMmMwZTBmNTQwZWZkYTIiLCJpYXQiOjE2MDg1NTczNDl9.--VgfHVPQlnhgD5heLzksZzHgIVSiGEXOO8TlZOkF9Q'
     }
 
     await api  
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -77,13 +82,14 @@ test('likes setting to 0 by default', async () => {
     expect(blog.likes).toBe(0);
 })
 
- test('creating blog with empty parameters causeing error', async () => {
+ test('creating blog with empty parameters causing error', async () => {
     const newBlog = {
         author: 'Dmitry Issaykin',
     };
 
     await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
         .send(newBlog)
         .expect(400);
 
